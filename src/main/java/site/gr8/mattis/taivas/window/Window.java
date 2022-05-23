@@ -1,6 +1,7 @@
 package site.gr8.mattis.taivas.window;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import site.gr8.mattis.taivas.Constants;
@@ -37,6 +38,7 @@ public class Window {
 	}
 
 	public void init() {
+		GLFWErrorCallback.createPrint(System.err).set();
 		if (!GLFW.glfwInit()) {
 			System.err.println("Could not instantiate GLFW! ");
 			System.exit(Constants.EXC_GLFW_INIT);
@@ -47,6 +49,12 @@ public class Window {
 		GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GLFW.GLFW_TRUE);
 		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_TRUE);
 		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
+	}
+
+	public void dispose() {
+		GLFW.glfwDestroyWindow(getHandle());
+		GLFWErrorCallback.createPrint(System.err).free();
+		GLFW.glfwTerminate();
 	}
 
 	public void createWindow() {
