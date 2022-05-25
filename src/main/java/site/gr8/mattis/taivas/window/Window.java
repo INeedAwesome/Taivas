@@ -22,18 +22,11 @@ public class Window {
 		return handle;
 	}
 
-	public Window(int width, int height, String title, boolean vsync) {
-		this.width = width;
-		this.height = height;
-		this.title = title;
-		this.vsync = vsync;
-		this.resized = false;
-	}
 	public Window(String title) {
-		this.width = DefaultWindowsAttribs.width;
-		this.height = DefaultWindowsAttribs.height;
+		this.width = Constants.DEFAULT_WIDTH;
+		this.height = Constants.DEFAULT_HEIGHT;
 		this.title = title;
-		this.vsync = DefaultWindowsAttribs.vsync;
+		this.vsync = Constants.DEFAULT_VSYNC;
 		this.resized = false;
 	}
 
@@ -61,6 +54,7 @@ public class Window {
 		handle = GLFW.glfwCreateWindow(this.width, this.height, this.title, 0, 0);
 		if (handle == 0) {
 			System.err.println("Could not instantiate a GLFW window! ");
+			GLFW.glfwTerminate();
 			System.exit(Constants.EXC_GLFW_WINDOW_INIT);
 		}
 		GLFW.glfwMakeContextCurrent(getHandle());
@@ -151,9 +145,9 @@ public class Window {
 		if (vidMode != null) {
 			GLFW.glfwRestoreWindow(getHandle()); // fix for the corners
 			GLFW.glfwSetWindowMonitor(getHandle(),0,
-					(vidMode.width() / 2) - (DefaultWindowsAttribs.width / 2),
-					(vidMode.height() / 2) - (DefaultWindowsAttribs.height / 2),
-					DefaultWindowsAttribs.width, DefaultWindowsAttribs.height,
+					(vidMode.width() / 2) - (Constants.DEFAULT_WIDTH / 2),
+					(vidMode.height() / 2) - (Constants.DEFAULT_HEIGHT / 2),
+					Constants.DEFAULT_WIDTH, Constants.DEFAULT_HEIGHT,
 					vidMode.refreshRate());
 
 		}
@@ -168,11 +162,4 @@ public class Window {
 		GLFW.glfwSetWindowTitle(getHandle(), title);
 	}
 
-	public static class DefaultWindowsAttribs {
-		public static final int width = 896;
-		public static final int height = 504;
-		public static final String title = "Taivas";
-		public static final boolean vsync = true;
-
-	}
 }

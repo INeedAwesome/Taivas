@@ -8,7 +8,7 @@ public class Main {
 	private static Window window = null;
 
 	public static void main(String[] args) throws InterruptedException {
-		window = new Window(Constants.TITLE);
+		window = new Window(Constants.DEFAULT_TITLE);
 		window.init();
 		window.createWindow();
 		while (!window.windowShouldClose()) {
