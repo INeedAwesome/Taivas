@@ -7,13 +7,17 @@ public class Main {
 
 	private static Window window = null;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		window = new Window(Constants.TITLE);
 		window.init();
 		window.createWindow();
 		while (!window.windowShouldClose()) {
 			GLFW.glfwPollEvents();
 			window.update();
+			if (GLFW.glfwGetKey(window.getHandle(), GLFW.GLFW_KEY_0) == GLFW.GLFW_PRESS) {
+				window.switchFullscreen();
+				Thread.sleep(40);
+			}
 		}
 		window.dispose();
 	}

@@ -2,6 +2,7 @@ package site.gr8.mattis.taivas.window;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import site.gr8.mattis.taivas.Constants;
@@ -10,12 +11,11 @@ public class Window {
 
 	private long handle;
 	private boolean resized;
+	private boolean fullscreen;
 
 	private int width;
 	private int height;
 	private boolean vsync;
-	private boolean fullscreen;
-
 	private String title;
 
 	public long getHandle() {
@@ -30,10 +30,10 @@ public class Window {
 		this.resized = false;
 	}
 	public Window(String title) {
-		this.width = 896;
-		this.height = 504;
+		this.width = DefaultWindowsAttribs.width;
+		this.height = DefaultWindowsAttribs.height;
 		this.title = title;
-		this.vsync = true;
+		this.vsync = DefaultWindowsAttribs.vsync;
 		this.resized = false;
 	}
 
@@ -102,6 +102,7 @@ public class Window {
 	public void setWidth(int width) {
 		this.width = width;
 		GLFW.glfwSetWindowSize(getHandle(),width, this.height);
+		setResized(true);
 	}
 
 	public int getHeight() {
@@ -111,6 +112,7 @@ public class Window {
 	public void setHeight(int height) {
 		this.height = height;
 		GLFW.glfwSetWindowSize(getHandle(),this.width, height);
+		setResized(true);
 	}
 
 	public boolean isVsync() {
@@ -122,12 +124,39 @@ public class Window {
 		GLFW.glfwSwapInterval(vsync ? 1 : 0);
 	}
 
+	public void switchFullscreen() {
+		if (this.isFullscreen()) {
+			setFullscreen(false);
+			return;
+		}
+		setFullscreen(true);
+	}
+
 	public boolean isFullscreen() {
 		return fullscreen;
 	}
 
 	public void setFullscreen(boolean fullscreen) {
 		this.fullscreen = fullscreen;
+		if (fullscreen) {
+			// switch to fullscreen
+			GLFWVidMode vidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
+			if (vidMode != null) {
+				GLFW.glfwSetWindowMonitor(getHandle(), GLFW.glfwGetPrimaryMonitor(), 0, 0, vidMode.width(), vidMode.height(), vidMode.refreshRate());
+			}
+			return;
+		}
+		// switch to windowed mode
+		GLFWVidMode vidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
+		if (vidMode != null) {
+			GLFW.glfwRestoreWindow(getHandle()); // fix for the corners
+			GLFW.glfwSetWindowMonitor(getHandle(),0,
+					(vidMode.width() / 2) - (DefaultWindowsAttribs.width / 2),
+					(vidMode.height() / 2) - (DefaultWindowsAttribs.height / 2),
+					DefaultWindowsAttribs.width, DefaultWindowsAttribs.height,
+					vidMode.refreshRate());
+
+		}
 	}
 
 	public String getTitle() {
@@ -137,5 +166,13 @@ public class Window {
 	public void setTitle(String title) {
 		this.title = title;
 		GLFW.glfwSetWindowTitle(getHandle(), title);
+	}
+
+	public static class DefaultWindowsAttribs {
+		public static final int width = 896;
+		public static final int height = 504;
+		public static final String title = "Taivas";
+		public static final boolean vsync = true;
+
 	}
 }
