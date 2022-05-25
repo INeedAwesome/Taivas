@@ -6,6 +6,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import site.gr8.mattis.taivas.Constants;
+import site.gr8.mattis.taivas.input.KeyboardInput;
 
 public class Window {
 
@@ -13,6 +14,8 @@ public class Window {
 	private boolean resized;
 	private boolean fullscreen;
 
+	private int posX;
+	private int posY;
 	private int width;
 	private int height;
 	private boolean vsync;
@@ -44,12 +47,6 @@ public class Window {
 		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
 	}
 
-	public void dispose() {
-		GLFW.glfwDestroyWindow(getHandle());
-		GLFWErrorCallback.createPrint(System.err).free();
-		GLFW.glfwTerminate();
-	}
-
 	public void createWindow() {
 		handle = GLFW.glfwCreateWindow(this.width, this.height, this.title, 0, 0);
 		if (handle == 0) {
@@ -60,10 +57,11 @@ public class Window {
 		GLFW.glfwMakeContextCurrent(getHandle());
 		GL.createCapabilities();
 		GLFW.glfwSetFramebufferSizeCallback(getHandle(), this::FrameBufferCallback);
+		GLFW.glfwSetKeyCallback(getHandle(), KeyboardInput::keyCallback);
 
 		GLFW.glfwShowWindow(getHandle());
-
 	}
+
 	public void update() {
 		GLFW.glfwSwapBuffers(getHandle());
 		if (isResized()) {
@@ -71,8 +69,36 @@ public class Window {
 			setResized(false);
 		}
 	}
+
+	public void dispose() {
+		GLFW.glfwDestroyWindow(getHandle());
+		GLFWErrorCallback.createPrint(System.err).free();
+		GLFW.glfwTerminate();
+	}
+
 	public boolean windowShouldClose() {
 		return GLFW.glfwWindowShouldClose(getHandle());
+	}
+	public void requestWindowShouldClose() {
+		GLFW.glfwSetWindowShouldClose(getHandle(), true);
+	}
+
+	public int getPosX() {
+		return posX;
+	}
+
+	public void setPosX(int posX) {
+		this.posX = posX;
+		GLFW.glfwSetWindowPos(getHandle(), posX, this.posY);
+	}
+
+	public int getPosY() {
+		return posY;
+	}
+
+	public void setPosY(int posY) {
+		this.posY = posY;
+		GLFW.glfwSetWindowPos(getHandle(), this.posX, posY);
 	}
 
 	public boolean isResized() {
@@ -136,6 +162,11 @@ public class Window {
 			// switch to fullscreen
 			GLFWVidMode vidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
 			if (vidMode != null) {
+				int[] x = {0};
+				int[] y = {0};
+				GLFW.glfwGetWindowPos(getHandle(), x, y);
+				setPosX(x[0]);
+				setPosY(y[0]);
 				GLFW.glfwSetWindowMonitor(getHandle(), GLFW.glfwGetPrimaryMonitor(), 0, 0, vidMode.width(), vidMode.height(), vidMode.refreshRate());
 			}
 			return;
@@ -145,11 +176,10 @@ public class Window {
 		if (vidMode != null) {
 			GLFW.glfwRestoreWindow(getHandle()); // fix for the corners
 			GLFW.glfwSetWindowMonitor(getHandle(),0,
-					(vidMode.width() / 2) - (Constants.DEFAULT_WIDTH / 2),
-					(vidMode.height() / 2) - (Constants.DEFAULT_HEIGHT / 2),
+					getPosX(), getPosY(),
 					Constants.DEFAULT_WIDTH, Constants.DEFAULT_HEIGHT,
 					vidMode.refreshRate());
-
+			setResized(true);
 		}
 	}
 
