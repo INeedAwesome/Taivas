@@ -1,5 +1,8 @@
 package site.gr8.mattis.taivas;
 
+import org.lwjgl.glfw.GLFW;
+import site.gr8.mattis.taivas.window.Window;
+
 public class Constants {
 
 	// 1 - 10 	INSTANTIATION

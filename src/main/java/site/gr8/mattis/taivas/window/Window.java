@@ -1,11 +1,13 @@
 package site.gr8.mattis.taivas.window;
 
+import org.joml.Math;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import site.gr8.mattis.taivas.Constants;
+import site.gr8.mattis.taivas.Main;
 import site.gr8.mattis.taivas.input.KeyboardInput;
 
 public class Window {
@@ -22,7 +24,7 @@ public class Window {
 	private String title;
 
 	public long getHandle() {
-		return handle;
+		return this.handle;
 	}
 
 	public Window(String title) {
@@ -56,10 +58,18 @@ public class Window {
 		}
 		GLFW.glfwMakeContextCurrent(getHandle());
 		GL.createCapabilities();
+		setVsync(isVsync());
+		centerWindow();
 		GLFW.glfwSetFramebufferSizeCallback(getHandle(), this::FrameBufferCallback);
 		GLFW.glfwSetKeyCallback(getHandle(), KeyboardInput::keyCallback);
 
 		GLFW.glfwShowWindow(getHandle());
+	}
+
+	private void centerWindow() {
+		GLFWVidMode vidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
+		assert vidMode != null;
+		GLFW.glfwSetWindowPos(getHandle(), (vidMode.width() - this.width) / 2, (vidMode.height() - this.height) / 2);
 	}
 
 	public void update() {
@@ -79,6 +89,7 @@ public class Window {
 	public boolean windowShouldClose() {
 		return GLFW.glfwWindowShouldClose(getHandle());
 	}
+
 	public void requestWindowShouldClose() {
 		GLFW.glfwSetWindowShouldClose(getHandle(), true);
 	}
@@ -179,6 +190,8 @@ public class Window {
 					getPosX(), getPosY(),
 					Constants.DEFAULT_WIDTH, Constants.DEFAULT_HEIGHT,
 					vidMode.refreshRate());
+			if (getPosX() < 1 || getPosY() < 31)
+				centerWindow();
 			setResized(true);
 		}
 	}
