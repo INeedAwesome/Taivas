@@ -1,0 +1,9 @@
+app.version:0.0.9
+fullscreen:false
+maxFPS:165
+vsync:true
+fov:90
+sensitivity:0.1
+lang:en-us
+samples:1
+

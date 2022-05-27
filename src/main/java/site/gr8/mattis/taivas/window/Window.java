@@ -1,20 +1,20 @@
 package site.gr8.mattis.taivas.window;
 
-import org.joml.Math;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
-import site.gr8.mattis.taivas.Constants;
-import site.gr8.mattis.taivas.Main;
+import site.gr8.mattis.taivas.utils.Constants;
 import site.gr8.mattis.taivas.input.KeyboardInput;
+import site.gr8.mattis.taivas.settings.Settings;
 
 public class Window {
 
 	private long handle;
 	private boolean resized;
 	private boolean fullscreen;
+	private boolean maximized;
 
 	private int posX;
 	private int posY;
@@ -47,6 +47,7 @@ public class Window {
 		GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GLFW.GLFW_TRUE);
 		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_TRUE);
 		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
+		GLFW.glfwWindowHint(GLFW.GLFW_SAMPLES, Settings.getInt("samples"));
 	}
 
 	public void createWindow() {
@@ -127,7 +128,7 @@ public class Window {
 	}
 
 	public int getWidth() {
-		return width;
+		return this.width == 0 ? 1 : this.width;
 	}
 
 	public void setWidth(int width) {
@@ -137,7 +138,7 @@ public class Window {
 	}
 
 	public int getHeight() {
-		return height;
+		return this.height == 0 ? 1 : this.height;
 	}
 
 	public void setHeight(int height) {
@@ -178,6 +179,7 @@ public class Window {
 				GLFW.glfwGetWindowPos(getHandle(), x, y);
 				setPosX(x[0]);
 				setPosY(y[0]);
+				maximized = GLFW.glfwGetWindowAttrib(getHandle(), GLFW.GLFW_MAXIMIZED) == 1;
 				GLFW.glfwSetWindowMonitor(getHandle(), GLFW.glfwGetPrimaryMonitor(), 0, 0, vidMode.width(), vidMode.height(), vidMode.refreshRate());
 			}
 			return;
@@ -192,6 +194,8 @@ public class Window {
 					vidMode.refreshRate());
 			if (getPosX() < 1 || getPosY() < 31)
 				centerWindow();
+			if (maximized)
+				GLFW.glfwMaximizeWindow(getHandle());
 			setResized(true);
 		}
 	}
