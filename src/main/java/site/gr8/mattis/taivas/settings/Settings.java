@@ -102,6 +102,7 @@ public class Settings {
 			fov:90
 			sensitivity:0.1
 			lang:en-us
+			samples:1
 			""");
 	}
 
