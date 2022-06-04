@@ -62,6 +62,7 @@ public class Camera {
 		this.pitch 	= orientation.x;
 		this.yaw 	= orientation.y;
 		this.roll 	= orientation.z;
+
 	}
 
 	/**
@@ -73,6 +74,8 @@ public class Camera {
 		this.yaw += x;
 		this.pitch += y;
 		this.roll += z;
+		this.pitch = Math.min(this.pitch, 90);
+		this.pitch = Math.max(this.pitch, -90);
 	}
 
 	public float getPitch() {
