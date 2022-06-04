@@ -4,6 +4,10 @@ in vec3 o_color;
 
 out vec4 fo_color;
 
+uniform float u_time;
+
 void main() {
-    fo_color = vec4(o_color.x, o_color.y, o_color.z, 1);
+    
+
+    fo_color = vec4(o_color.x, o_color.y, 1, 1);
 }

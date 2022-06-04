@@ -5,6 +5,7 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import site.gr8.mattis.taivas.input.MouseInput;
 import site.gr8.mattis.taivas.utils.Constants;
 import site.gr8.mattis.taivas.input.KeyboardInput;
 import site.gr8.mattis.taivas.settings.Settings;
@@ -63,6 +64,13 @@ public class Window {
 		centerWindow();
 		GLFW.glfwSetFramebufferSizeCallback(getHandle(), this::FrameBufferCallback);
 		GLFW.glfwSetKeyCallback(getHandle(), KeyboardInput::keyCallback);
+		GLFW.glfwSetMouseButtonCallback(getHandle(), MouseInput::buttonCallback);
+		GLFW.glfwSetScrollCallback(getHandle(), MouseInput::scrollCallback);
+		GLFW.glfwSetCursorPosCallback(getHandle(), MouseInput::positionCallback);
+		MouseInput.enableRawMouseMotion();
+
+		if (Constants.START_IN_MAXIMISED)
+			GLFW.glfwMaximizeWindow(getHandle());
 
 		GLFW.glfwShowWindow(getHandle());
 	}

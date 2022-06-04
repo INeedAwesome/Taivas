@@ -11,6 +11,7 @@ public class Constants {
 	public static final int DEFAULT_WIDTH = 896;
 	public static final int DEFAULT_HEIGHT = 504;
 	public static final boolean DEFAULT_VSYNC = true;
+	public static final boolean START_IN_MAXIMISED = true;
 
 	public static final String DEFAULT_RESOURCE_LOCATION = "resources";
 }

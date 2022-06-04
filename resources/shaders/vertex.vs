@@ -6,8 +6,10 @@ layout(location = 1) in vec3 i_color;
 out vec3 o_color;
 
 uniform mat4 u_projMat;
+uniform mat4 u_viewMat;
 
 void main() {
-    gl_Position =u_projMat* vec4(i_position, 1);
+    gl_Position =u_projMat * u_viewMat * vec4(i_position, 1);
     o_color = i_color;
+    
 }
